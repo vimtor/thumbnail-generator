@@ -31,19 +31,19 @@ const App = () => {
 
   return (
     <ChakraProvider>
-      <Grid h="100vh" templateRows="auto repeat(5, 1fr)" templateColumns="repeat(7, 1fr)">
-        <GridItem rowSpan={1} colSpan={7} >
-          <Navbar/>
-        </GridItem>
-        <GridItem rowSpan={5} colSpan={5}>
-          <Canvas image={image} onDrop={onDrop} onPositionChange={(event, delta) => {
-            setPosition({x: delta.x, y: delta.y})
-          }}/>
-        </GridItem>
-        <GridItem rowSpan={5} colSpan={2}>
-          <Sidebar onDownload={handleDownload}/>
-        </GridItem>
-      </Grid>
+      <Flex direction="column" h="100vh">
+        <Navbar />
+        <Flex h="100%">
+          <Canvas
+            image={image}
+            onDrop={onDrop}
+            onPositionChange={(event, delta) => {
+              setPosition({x: delta.x, y: delta.y})
+            }}
+          />
+          <Sidebar onDownload={handleDownload} onClear={() => setImage('')}/>
+        </Flex>
+      </Flex>
       <Box pos="fixed" top="100vh">
         <div ref={ref}>
           {[1,2,3,4].map(number => {
