@@ -1,10 +1,14 @@
 import React from 'react'
 import {Button, VStack} from '@chakra-ui/react'
 
-const Sidebar = () => {
+type SidebarProps = {
+  onDownload: () => Promise<void>;
+}
+
+const Sidebar = ({onDownload}: SidebarProps) => {
   return (
     <VStack>
-      <Button>Download</Button>
+      <Button onClick={onDownload}>Download</Button>
     </VStack>
   )
 }

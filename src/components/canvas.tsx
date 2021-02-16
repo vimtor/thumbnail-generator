@@ -1,58 +1,32 @@
+import React from "react";
 import ImageDropzone from "./image-dropzone";
-import React, {useCallback, useRef, useState} from "react";
-import {Text, Button, Center, Image, Box} from '@chakra-ui/react'
-import {toPng} from "html-to-image";
-import download from "downloadjs";
+import {Text, Flex, Center, Image, Box} from '@chakra-ui/react'
+import {Rnd, RndDragCallback} from "react-rnd";
 
-const Canvas = () => {
-  const [image, setImage] = useState<string>()
+type CanvasProps = {
+  image: string;
+  onDrop: (files: File[]) => void;
+  onPositionChange: RndDragCallback;
+}
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    setImage(URL.createObjectURL(file))
-  }, [])
-
-
-  const ref = useRef<HTMLDivElement>(null)
-
-  const handleClick = async () => {
-    if (!ref.current) {
-      return
-    }
-
-    const images = Array.from(ref.current.childNodes)
-    let index = 1;
-
-    for (const image of images) {
-      const dataUrl = await toPng(image as HTMLElement)
-      download(dataUrl, `file-${index}.png`)
-      index += 1;
-    }
-  }
-
+const Canvas = ({image, onDrop, onPositionChange}: CanvasProps) => {
   return (
     <Center bg="gray.100" h="100%" w="100%">
       <Box w={1280} h={720}>
         {image ? (
-          <Image w="100%" src={image} alt="thumbnail layout"/>
+          <Box w={1280} h={720} overflow="hidden">
+            <Image w="100%" src={image} alt="thumbnail layout"/>
+            <Rnd default={{height: 200, width: 200, x: 0, y: 0}} onDragStop={onPositionChange} bounds="parent">
+              <Flex align="center" justify="center" w="100%" h="100%" border="2pt dashed" borderColor="white">
+                <Text color="white" fontSize="6xl" fontWeight="bold">
+                  01
+                </Text>
+              </Flex>
+            </Rnd>
+          </Box>
         ): (
           <ImageDropzone onDrop={onDrop} />
         )}
-      </Box>
-      <Button onClick={handleClick}>Download</Button>
-      <Box pos="fixed" top="100vh">
-        <div ref={ref}>
-          {[1,2,3,4].map(number => {
-            return (
-              <Box key={number} pos="relative" w={1280} h={720}>
-                <Image w="100%" src={image} alt="thumbnail layout"/>
-                <Text fontSize="3xl" color="red.500" pos="absolute" top="0" left="0">
-                  {number}
-                </Text>
-              </Box>
-            )
-          })}
-        </div>
       </Box>
     </Center>
   )
