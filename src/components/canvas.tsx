@@ -1,24 +1,41 @@
 import React from "react";
 import ImageDropzone from "./image-dropzone";
 import { Text, Flex, Center, Image, Box } from "@chakra-ui/react";
-import { Rnd, RndDragCallback } from "react-rnd";
+import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
+import Position from "../types/position";
+import Size from "../types/size";
+import FontProperties from "../types/fonts";
 
 type CanvasProps = {
   image: string;
+  position: Position;
+  size: Size;
+  fontSettings: FontProperties;
   onDrop: (files: File[]) => void;
-  onPositionChange: RndDragCallback;
+  onDrag: RndDragCallback;
+  onResize: RndResizeCallback;
 };
 
-const Canvas = ({ image, onDrop, onPositionChange }: CanvasProps) => {
+const Canvas = ({
+  image,
+  fontSettings,
+  position,
+  size,
+  onDrop,
+  onDrag,
+  onResize,
+}: CanvasProps) => {
   return (
     <Center bg="gray.100" h="100%" w="100%">
       <Box w={1280} h={720}>
         {image ? (
-          <Box w={1280} h={720} overflow="hidden">
+          <>
             <Image w="100%" src={image} alt="thumbnail layout" />
             <Rnd
-              default={{ height: 200, width: 200, x: 0, y: 0 }}
-              onDragStop={onPositionChange}
+              position={position}
+              size={size}
+              onDragStop={onDrag}
+              onResizeStop={onResize}
               bounds="parent"
             >
               <Flex
@@ -29,12 +46,18 @@ const Canvas = ({ image, onDrop, onPositionChange }: CanvasProps) => {
                 border="2pt dashed"
                 borderColor="white"
               >
-                <Text color="white" fontSize="6xl" fontWeight="bold">
+                <Text
+                  color={`#${fontSettings.color}`}
+                  fontSize={fontSettings.size}
+                  fontFamily={fontSettings.family}
+                  fontStyle={fontSettings.style}
+                  fontWeight={fontSettings.weight}
+                >
                   01
                 </Text>
               </Flex>
             </Rnd>
-          </Box>
+          </>
         ) : (
           <ImageDropzone onDrop={onDrop} />
         )}
@@ -43,4 +66,4 @@ const Canvas = ({ image, onDrop, onPositionChange }: CanvasProps) => {
   );
 };
 
-export default Canvas
+export default Canvas;
